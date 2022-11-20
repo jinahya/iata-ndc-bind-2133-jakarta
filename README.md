@@ -6,6 +6,6 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.jinahya/iata-ndc-bind-2133-jakarta)](https://search.maven.org/search?q=a:iata-ndc-bind-2133-jakarta)
 [![javadoc](https://javadoc.io/badge2/com.github.jinahya/iata-ndc-2133-jakarta/javadoc.svg)](https://javadoc.io/doc/com.github.jinahya/iata-ndc-2133-jakarta)
 
-Java classes for binding [New Distribution Capability - NDC](https://www.iata.org/en/programs/airline-distribution/retailing/ndc/).
+Java classes for binding [New Distribution Capability - NDC (21.3.3)](https://www.iata.org/en/programs/airline-distribution/retailing/ndc/).
 
 See [iata-ndc-bind-2133-javax](https://github.com/jinahya/iata-ndc-bind-2133-javax) for the `javax.*` namespace.

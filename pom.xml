@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.github.jinahya</groupId>
+    <artifactId>jinahya-parent</artifactId>
+    <version>0.8.9</version>
+  </parent>
+
+  <artifactId>iata-ndc-bind-2133-jakarta</artifactId>
+  <version>0.0.2-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>${project.artifactId}</name>
+  <description>Java classes for binding IATA NDC</description>
+  <url>https://github.com/jinahya/${project.artifactId}</url>
+  <inceptionYear>2022</inceptionYear>
+  <organization>
+    <name>Jinahya, Inc.</name>
+    <url>https://jinahya.com</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:jinahya/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:jinahya/${project.artifactId}.git</developerConnection>
+    <url>https://github.com/jinahya/${project.artifactId}</url>
+    <tag>HEAD</tag>
+  </scm>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/jinahya/${project.artifactId}/issues</url>
+  </issueManagement>
+
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+    <maven.compiler.release>${maven.compiler.target}</maven.compiler.release>
+    <maven.compiler.testSource>17</maven.compiler.testSource>
+    <maven.compiler.testTarget>${maven.compiler.testSource}</maven.compiler.testTarget>
+    <maven.compiler.testRelease>${maven.compiler.testTarget}</maven.compiler.testRelease>
+    <automatic.module.name>com.github.jinahya.iata.ndc.bind</automatic.module.name>
+    <sonar.organization>jinahya-github</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <version.org-w3-xmldsig-core1-bind>0.0.5</version.org-w3-xmldsig-core1-bind>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.github.jinahya</groupId>
+      <artifactId>org-w3-xmldsig-core1-bind-jakarta</artifactId>
+      <version>${version.org-w3-xmldsig-core1-bind}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>4.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.9.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.13.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>2.0.0</version>
+          <configuration>
+            <licenseName>apache_v2</licenseName>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>tidy-maven-plugin</artifactId>
+          <version>1.2.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>antrun-unzip</id>
+            <phase>generate-sources</phase> <!-- should be proceeded before the xjc -->
+            <configuration>
+              <target>
+                <property name="xsd" value="${project.basedir}/src/main/xsd"/>
+                <mkdir dir="${xsd}"/>
+                <delete includeemptydirs="true">
+                  <fileset dir="${xsd}" includes="**/*"/>
+                </delete>
+                <unzip src="${project.basedir}/src/main/zip/21_3_3_distribution_schemas.zip" dest="${xsd}">
+                  <patternset>
+                    <include name="**/*.xsd"/>
+                  </patternset>
+                  <mapper type="flatten"/>
+                </unzip>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <dependencyConvergence/>
+                <requireJavaVersion>
+                  <version>[1.8.0,)</version>
+                </requireJavaVersion>
+                <requireMavenVersion>
+                  <version>[3.5.4,)</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <compilerArgs>
+            <arg>-Xlint</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.2</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>${automatic.module.name}</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+          <excludes>
+            <exclude>org/w3/**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.4.0</version>
+        <configuration>
+          <doclint>none</doclint>
+          <excludePackageNames>org.w3.*</excludePackageNames>
+          <links>
+            <link>https://static.javadoc.io/com.github.jinahya/org-w3-xmldsig-core1-bind-jakarta/${version.org-w3-xmldsig-core1-bind}</link>
+          </links>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>animal-sniffer-maven-plugin</artifactId>
+        <version>1.22</version>
+        <executions>
+          <execution>
+            <id>check-signature-java18:1.0</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <signature>
+                <groupId>org.codehaus.mojo.signature</groupId>
+                <artifactId>java18</artifactId>
+                <version>1.0</version>
+              </signature>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
+        <version>2.5.0</version>
+        <executions>
+          <execution>
+            <id>xjc</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <phase>generate-sources</phase> <!-- default -->
+            <configuration>
+              <enableIntrospection>true</enableIntrospection>
+              <episodeFileName>${automatic.module.name}-episode</episodeFileName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
